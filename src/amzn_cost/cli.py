@@ -24,9 +24,12 @@ def main(product: str):
         scraper = AmazonScraper()
         html_content = scraper.fetch_product_page(product)
         
+        # Clean HTML to remove JavaScript, CSS, and keep only product content
+        cleaned_html = scraper.clean_html(html_content)
+        
         # Parse using BAML
         parser = ProductParser()
-        result = parser.parse_product(html_content)
+        result = parser.parse_product(cleaned_html)
         
         # Output as JSON
         output = {

@@ -1,11 +1,17 @@
 """Product information parser using BAML."""
 
+import asyncio
+import logging
+import os
 from typing import Any
 
+# Suppress BAML logging to stdout
+logging.getLogger("baml_py").setLevel(logging.ERROR)
+os.environ["BAML_LOG_LEVEL"] = "ERROR"
+
 try:
-    from baml_py import b
-    from baml_client import BamlClient
-    from baml_client.types import ProductInfo
+    from .baml_client import b
+    from .baml_client.types import ProductInfo
     BAML_AVAILABLE = True
 except ImportError:
     BAML_AVAILABLE = False
@@ -25,7 +31,6 @@ class ProductParser:
             raise RuntimeError(
                 "BAML client not generated. Please run: poetry run baml-cli generate"
             )
-        self.client = BamlClient()
     
     def parse_product(self, html_content: str) -> Any:
         """
@@ -37,6 +42,7 @@ class ProductParser:
         Returns:
             ProductInfo object containing cost and description
         """
-        result = b.ExtractProductInfo(html_content)
+        # Run the async function synchronously
+        result = asyncio.run(b.ExtractProductInfo(html_content))
         return result
 

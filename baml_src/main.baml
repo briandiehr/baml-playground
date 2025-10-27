@@ -7,27 +7,30 @@ class ProductInfo {
 
 // Define the LLM client (using Llama 8b as per user preference)
 client<llm> LocalLlama {
-  provider "openai-generic"
+  provider openai-generic
   options {
-    model "llama3.1:8b"
-    api_key "dummy-key-not-needed-for-local"
-    base_url "http://localhost:11434/v1"
-    max_tokens 500
-    temperature 0.1
+    model "llama3.1:8b" 
+    api_key "dummy-key-not-needed-for-local" 
+    base_url "http://localhost:11434/v1" 
   }
 }
+
 // Main function to extract product information from HTML
 function ExtractProductInfo(html_content: string) -> ProductInfo {
   client LocalLlama
   prompt #"
     {{ _.role("user") }}
-    Extract the product cost and description from this HTML and respond with ONLY valid JSON.
+    Extract the price and product title from this HTML. Return JSON only.
+    
+    Instructions:
+    - Find the price (remove $ and commas)
+    - Price may be split across tags like: <span>249</span> <span>.</span> <span>99</span> → combine to 249.99
+    - Find the title in <h1> or productTitle tags
     
     HTML:
     {{ html_content }}
     
-    Respond with JSON:
-    {"cost": <number>, "description": "<text>"}
+    JSON format: {"cost": 249.99, "description": "Product Title"}
   "#
 }
 
