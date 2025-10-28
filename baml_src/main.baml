@@ -1,20 +1,5 @@
 // BAML Configuration for Amazon Product Parser
 
-class ProductInfo {
-  cost float
-  description string
-}
-
-// Define the LLM client (using Llama 8b as per user preference)
-client<llm> LocalLlama {
-  provider openai-generic
-  options {
-    model "llama3.1:8b" 
-    api_key "dummy-key-not-needed-for-local" 
-    base_url "http://localhost:11434/v1" 
-  }
-}
-
 // Main function to extract product information from HTML
 function ExtractProductInfo(html_content: string) -> ProductInfo {
   client LocalLlama
@@ -30,7 +15,7 @@ function ExtractProductInfo(html_content: string) -> ProductInfo {
     HTML:
     {{ html_content }}
     
-    JSON format: {"cost": 249.99, "description": "Product Title"}
+    {{ ctx.output_format }}
   "#
 }
 
